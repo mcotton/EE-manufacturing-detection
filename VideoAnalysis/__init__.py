@@ -40,7 +40,7 @@ class VideoAnalysis:
     self.start_video()
 
 
-  def post_annotation(cam, instance, ns, timestamp, obj):
+  def post_annotation(self, cam, instance, ns, timestamp, obj):
 
 
     qr_code = obj['object']
@@ -71,7 +71,7 @@ class VideoAnalysis:
 
       if self.found_qr_codes[qr_code]['annt_uuid'] != None  and interval < MAX_DELAY_BETWEEN_ANNT:
         logging.debug('update, last event was %s seconds ago' % interval)
-        res = self.self.cam.update_annotation(instance=instance, ns=ns, timestamp=timestamp, obj=obj, annt_type='hb', uuid=self.found_qr_codes[qr_code]['annt_uuid'])
+        res = self.cam.update_annotation(instance=instance, ns=ns, timestamp=timestamp, obj=obj, annt_type='hb', uuid=self.found_qr_codes[qr_code]['annt_uuid'])
         
       else:
         # if not, make it a new annotation
@@ -84,7 +84,7 @@ class VideoAnalysis:
 
       if res and res['uuid']:
         self.found_qr_codes[qr_code]['annt_uuid'] = res['uuid']
-        update_tracker(self.cam.camera_id, obj['object'], res['uuid'], now)
+        self.update_tracker(self.cam.camera_id, obj['object'], res['uuid'], timestamp)
         return res
 
       else:
@@ -95,7 +95,7 @@ class VideoAnalysis:
       return None
 
 
-  def update_tracker(camera_id=None, barcodeData=None, ee_uuid=None, timestamp=None):
+  def update_tracker(self, camera_id=None, barcodeData=None, ee_uuid=None, timestamp=None):
 
     if camera_id and barcodeData and timestamp and ee_uuid:
 
@@ -177,14 +177,15 @@ class VideoAnalysis:
               }
             }
 
-           post_annotation(cam, een, 10020, now, obj)
+           self.post_annotation(self.cam, self.een, 10020, now, obj)
 
 
         # Do not show the output frame in Docker,
         # good for debugging,
         # bad for performance and does not work in Docker
         
-        # cv2.imshow("Barcode Scanner", frame)
+        cv2.namedWindow(self.cam.name, cv2.WINDOW_NORMAL)
+        cv2.imshow(self.cam.name, frame)
 
         key = cv2.waitKey(1) & 0xFF
 
