@@ -113,6 +113,12 @@ class VideoAnalysis:
     if self.instance_obj['vs_type'] == 'VideoStream':
       vs = VideoStream(self.instance_obj['vs']).start()
 
+    if self.instance_obj['vs_type'] == 'CloudVideoStream':
+      vs = VideoStream(self.instance_obj['vs']).start()
+
+    if self.instance_obj['vs_type'] == 'RTSPVideoStream':
+      vs = VideoStream(self.instance_obj['vs']).start()
+
     elif self.instance_obj['vs_type'] == 'FileVideoStream':
       vs = FileVideoStream(self.instance_obj['vs']).start()
 
@@ -184,8 +190,8 @@ class VideoAnalysis:
         # good for debugging,
         # bad for performance and does not work in Docker
         
-        cv2.namedWindow(self.cam.name, cv2.WINDOW_NORMAL)
-        cv2.imshow(self.cam.name, frame)
+        # cv2.namedWindow(self.cam.name, cv2.WINDOW_NORMAL)
+        # cv2.imshow(self.cam.name, frame)
 
         key = cv2.waitKey(1) & 0xFF
 
